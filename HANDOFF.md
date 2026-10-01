@@ -19,7 +19,7 @@ speedtrans/
 │   └── app.js             # 时间解析、计算、交互逻辑
 ├── Dockerfile              # nginx:alpine 多阶段不适用，单阶段即可
 ├── docker.conf            # nginx 配置（gzip、缓存、安全头）
-├── docker-compose.yml     # 一键启动（端口 8081）
+├── docker-compose.yml     # 一键启动（端口 8085）
 ├── .dockerignore
 ├── HANDOFF.md             # 本文件
 └── README.md              # 用户面向说明
@@ -45,14 +45,14 @@ npx http-server -p 8000
 # 构建镜像
 docker build -t speedtrans:latest .
 
-# 运行容器（端口 8081）
-docker run --rm -d --name speedtrans -p 8081:80 speedtrans:latest
+# 运行容器（端口 8085）
+docker run --rm -d --name speedtrans -p 8085:80 speedtrans:latest
 
 # 或使用 compose
 docker compose up -d
 
 # 验证
-curl -I http://localhost:8081
+curl -I http://localhost:8085
 
 # 查看日志
 docker logs -f speedtrans
@@ -65,7 +65,7 @@ docker stop    / docker compose down
 
 ### 4.1 生产环境
 - **Docker 镜像小**：基于 `nginx:1.27-alpine`，通常 < 15MB
-- **默认端口**：容器内 80，compose 映射到 8081（可在 `docker-compose.yml` 修改）
+- **默认端口**：容器内 80，compose 映射到 8085（可在 `docker-compose.yml` 修改）
 - **HTTPS**：建议在前面接 nginx / Caddy / Cloudflare 终止 TLS
 
 ### 4.2 镜像发布到 GHCR
@@ -133,7 +133,7 @@ function switchUnit(newUnit)
 
 ## 9. 常见问题
 **Q: 端口冲突？**
-A: 修改 `docker-compose.yml` 中 `- "8081:80"` 为其他端口，例如 `"8888:80"`
+A: 修改 `docker-compose.yml` 中 `- "8085:80"` 为其他端口，例如 `"8888:80"`
 
 **Q: 修改样式后浏览器不更新？**
 A: nginx 配置对静态资源设置了 7 天缓存，硬刷新 `Ctrl+Shift+R` 或在 DevTools 禁用缓存
