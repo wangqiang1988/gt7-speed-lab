@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GT7 · SPEED LAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<main class="container">
+  <header class="header">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00E5FF"/>
+            <stop offset="100%" stop-color="#FF6B1A"/>
+          </linearGradient>
+        </defs>
+        <polygon points="32,4 56,18 56,46 32,60 8,46 8,18" fill="none" stroke="url(#lg)" stroke-width="2.5"/>
+        <polygon points="32,16 46,24 46,40 32,48 18,40 18,24" fill="none" stroke="#00E5FF" stroke-width="1.5" opacity="0.6"/>
+        <text x="32" y="38" text-anchor="middle" fill="#00E5FF" font-family="Orbitron" font-size="14" font-weight="900">GT</text>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-line-1">SPEED LAB</span>
+        <span class="brand-line-2">GRAN TURISMO · TELEMETRY</span>
+      </div>
+    </div>
+    <div class="unit-toggle" role="tablist" aria-label="Unit system">
+      <button class="unit-btn active" data-unit="km" role="tab" aria-selected="true">KM</button>
+      <span class="unit-divider">|</span>
+      <button class="unit-btn" data-unit="mi" role="tab" aria-selected="false">MI</button>
+      <div class="unit-indicator"></div>
+    </div>
+  </header>
+
+  <section class="panel-grid">
+    <div class="panel" data-panel="time">
+      <div class="panel-header">
+        <span class="panel-tag">01</span>
+        <h2 class="panel-title">LAP TIME</h2>
+        <span class="panel-hint">mm:ss.xxx</span>
+      </div>
+      <div class="time-input-wrap">
+        <input type="text" id="timeInput" class="time-input" maxlength="9" placeholder="0:00.000" inputmode="numeric" autocomplete="off" />
+        <div class="time-mask" aria-hidden="true">
+          <span class="time-seg" data-seg="mm">--</span>
+          <span class="time-colon">:</span>
+          <span class="time-seg" data-seg="ss">--</span>
+          <span class="time-dot">.</span>
+          <span class="time-seg" data-seg="ms">---</span>
+        </div>
+      </div>
+      <div class="input-feedback" id="timeFeedback">Enter your lap time</div>
+    </div>
+
+    <div class="panel" data-panel="track">
+      <div class="panel-header">
+        <span class="panel-tag">02</span>
+        <h2 class="panel-title">TRACK</h2>
+        <span class="panel-hint" id="trackHint">Distance</span>
+      </div>
+      <div class="select-wrap">
+        <select id="trackSelect" class="track-select">
+          <option value="">— CUSTOM —</option>
+        </select>
+        <svg class="select-arrow" viewBox="0 0 12 8" aria-hidden="true">
+          <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/>
+        </svg>
+      </div>
+      <div class="distance-wrap">
+        <input type="number" id="distanceInput" class="distance-input" step="0.001" min="0" placeholder="0.000" inputmode="decimal" />
+        <span class="distance-unit" id="distanceUnit">km</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="action-row">
+    <button id="calcBtn" class="calc-btn">
+      <span class="calc-btn-bg"></span>
+      <span class="calc-btn-text">CALCULATE</span>
+      <span class="calc-btn-icon">▶</span>
+    </button>
+  </div>
+
+  <section class="result-panel" id="resultPanel">
+    <div class="result-header">
+      <span class="panel-tag">OUT</span>
+      <h2 class="result-title">AVERAGE SPEED</h2>
+      <div class="result-meta" id="resultMeta"></div>
+    </div>
+    <div class="result-body">
+      <div class="speed-block primary-speed">
+        <span class="speed-label" id="primaryLabel">KM/H</span>
+        <div class="speed-value">
+          <span class="speed-num" id="primarySpeed">0.0</span>
+        </div>
+        <div class="speed-bar"><div class="speed-bar-fill" id="primaryBar"></div></div>
+      </div>
+      <div class="speed-block secondary-speed">
+        <span class="speed-label">MPH</span>
+        <div class="speed-value">
+          <span class="speed-num" id="secondarySpeed">0.0</span>
+        </div>
+        <div class="speed-bar"><div class="speed-bar-fill" id="secondaryBar"></div></div>
+      </div>
+    </div>
+    <div class="scan-line"></div>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+  </section>
+
+  <footer class="footer">
+    <span>v1.0 · TELEMETRY MODULE</span>
+    <span class="footer-dot">●</span>
+    <span>FORGED FOR THE LOVE OF DRIVING</span>
+  </footer>
+</main>
+
+<script src="js/tracks.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
