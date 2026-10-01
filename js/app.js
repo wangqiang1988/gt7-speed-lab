@@ -5,9 +5,6 @@
   const tracks = window.GT7_TRACKS || [];
 
   const timeInput = document.getElementById('timeInput');
-  const timeSegMM = document.querySelector('[data-seg="mm"]');
-  const timeSegSS = document.querySelector('[data-seg="ss"]');
-  const timeSegMS = document.querySelector('[data-seg="ms"]');
   const timeFeedback = document.getElementById('timeFeedback');
 
   const trackSelect = document.getElementById('trackSelect');
@@ -43,32 +40,45 @@
   }
 
   // ===== Time parsing & formatting =====
-  function formatTimeInput(raw) {
+  function restoreCursor(el, prevCursor) {
+    requestAnimationFrame(() => {
+      const len = el.value.length;
+      el.setSelectionRange(len, len);
+    });
+  }
+
+  function formatTimeDisplay(raw) {
     const digits = raw.replace(/\D/g, '').slice(0, 9);
-    let mm = '--', ss = '--', ms = '---';
-    if (digits.length >= 1) mm = digits.slice(0, Math.min(2, digits.length));
-    if (digits.length >= 3) ss = digits.slice(2, Math.min(4, digits.length));
-    if (digits.length >= 5) ms = digits.slice(4, Math.min(7, digits.length));
-    else if (digits.length === 4) {
-      ms = digits.slice(4);
-      while (ms.length < 3) ms = '0' + ms;
+    if (!digits.length) return { raw: '', display: '', totalSeconds: null };
+    let mm = digits.slice(0, 2);
+    let ss = '', ms = '';
+    if (digits.length >= 3) ss = digits.slice(2, 4);
+    if (digits.length >= 5) ms = digits.slice(4, 7);
+    else if (digits.length === 4) ms = digits.slice(4) + '0';
+    const totalSeconds = parseTimeToSeconds(digits);
+    return { raw: digits, display: buildDisplay(mm, ss, ms), totalSeconds };
+  }
+
+  function buildDisplay(mm, ss, ms) {
+    let s = mm;
+    if (ss !== '' || ms !== '' || mm.length >= 2) {
+      while (s.length < 2) s = '0' + s;
+      s += ':';
+      if (ss !== '') s += ss.padStart(2, '0');
+      if (ms !== '') {
+        s += '.' + ms.padEnd(3, '0');
+      }
     }
-    return { raw: digits, mm, ss, ms };
+    return s;
   }
 
-  function renderTimeMask(formatted) {
-    timeSegMM.textContent = formatted.mm;
-    timeSegSS.textContent = formatted.ss;
-    timeSegMS.textContent = formatted.ms;
-  }
-
-  function parseTimeToSeconds(formatted) {
-    const mm = parseInt(formatted.mm, 10);
-    const ss = parseInt(formatted.ss, 10);
-    const ms = parseInt(formatted.ms, 10);
+  function parseTimeToSeconds(digits) {
+    if (digits.length < 5) return null;
+    const mm = parseInt(digits.slice(0, 2), 10);
+    const ss = parseInt(digits.slice(2, 4), 10);
+    const ms = parseInt(digits.slice(4, 7).padEnd(3, '0'), 10);
     if (isNaN(mm) || isNaN(ss) || isNaN(ms)) return null;
     if (ss > 59) return null;
-    if (ms > 999) return null;
     return mm * 60 + ss + ms / 1000;
   }
 
@@ -118,8 +128,7 @@
 
   // ===== Calculation core =====
   function calculate() {
-    const formatted = formatTimeInput(timeInput.value);
-    const totalSeconds = parseTimeToSeconds(formatted);
+    const { totalSeconds } = formatTimeDisplay(timeInput.value);
     const distanceKm = getDistanceKm();
 
     if (totalSeconds === null) {
@@ -222,23 +231,23 @@
   // ===== Event bindings =====
   function bindEvents() {
     timeInput.addEventListener('input', () => {
-      const formatted = formatTimeInput(timeInput.value);
-      timeInput.value = formatted.raw;
-      renderTimeMask(formatted);
-      const total = parseTimeToSeconds(formatted);
-      if (formatted.raw.length === 0) {
+      const cursor = timeInput.selectionStart;
+      const { raw, display, totalSeconds } = formatTimeDisplay(timeInput.value);
+      timeInput.value = display;
+      restoreCursor(timeInput, cursor);
+      if (raw.length === 0) {
         setFeedback('Enter your lap time');
-      } else if (total === null) {
-        setFeedback('INVALID TIME', 'error');
+      } else if (totalSeconds === null) {
+        setFeedback('NEED AT LEAST mm:ss.xxx', 'error');
       } else {
-        const mins = Math.floor(total / 60);
-        const secs = total - mins * 60;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds - mins * 60;
         setFeedback(`READY · ${mins}:${secs.toFixed(3).padStart(6, '0')}`, 'ok');
       }
     });
 
     timeInput.addEventListener('focus', () => {
-      renderTimeMask(formatTimeInput(timeInput.value));
+      // no-op: input is the display
     });
 
     trackSelect.addEventListener('change', () => {
@@ -282,7 +291,6 @@
   function init() {
     initTracks();
     bindEvents();
-    renderTimeMask({ mm: '--', ss: '--', ms: '---' });
     requestAnimationFrame(updateUnitIndicator);
     setTimeout(updateUnitIndicator, 50);
   }
