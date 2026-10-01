@@ -16,7 +16,7 @@ Gran Turismo 7 风格的圈速→平均速度换算工具。
 
 ### Docker
 ```bash
-docker compose up -d
+docker compose up -d    # 注意是 docker compose（v2，空格），不是 docker-compose
 # 访问 http://localhost:8085
 ```
 

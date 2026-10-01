@@ -48,7 +48,7 @@ docker build -t speedtrans:latest .
 # 运行容器（端口 8085）
 docker run --rm -d --name speedtrans -p 8085:80 speedtrans:latest
 
-# 或使用 compose
+# 或使用 compose（请使用 v2，空格分隔）
 docker compose up -d
 
 # 验证
@@ -59,6 +59,24 @@ docker logs -f speedtrans
 
 # 停止
 docker stop    / docker compose down
+```
+
+**⚠️ 重要**：请使用 **Docker Compose v2**（`docker compose`，空格），**不要使用** 旧的 **v1**（`docker-compose`，连字符）。
+v1（Python 实现）与 Docker Engine 25+ 不兼容，会报 `KeyError: 'ContainerConfig'`。
+
+检查版本：
+```bash
+docker compose version    # v2.x ✓
+docker-compose --version  # v1.x ✗
+```
+若只安装了 v1，请升级：
+```bash
+# Debian/Ubuntu
+sudo apt-get update && sudo apt-get install docker-compose-plugin
+
+# 或直接下载 v2
+sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+  -o /usr/local/bin/docker-compose-v2 && sudo ln -sf /usr/local/bin/docker-compose-v2 /usr/local/bin/docker-compose
 ```
 
 ## 4. 部署
