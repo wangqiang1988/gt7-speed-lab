@@ -255,9 +255,9 @@ body {
   background: transparent;
   border: none;
   outline: none;
-  color: var(--text);
+  color: #FFFFFF;
   caret-color: var(--cyan);
-  font-family: var(--font-num);
+  font-family: 'Orbitron', 'Rajdhani', 'Courier New', monospace;
   font-weight: 700;
   font-size: 44px;
   letter-spacing: 0.08em;
@@ -265,6 +265,7 @@ body {
   padding: 18px 0;
   cursor: text;
   font-variant-numeric: tabular-nums;
+  -webkit-text-fill-color: var(--text);
 }
 
 .time-input::placeholder {
